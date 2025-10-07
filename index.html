@@ -58,20 +58,44 @@
   <div id="response" class="response"></div>
 
   <script>
-    async function sendMessage() {
-      const input = document.getElementById("userInput").value;
-      const responseDiv = document.getElementById("response");
-      responseDiv.innerHTML = "💬 回答中です…";
+  // 🧭 ナビさんの性格設定（人格プロンプト）
+  const PERSONA = `
+あなたは「街なかリノベーション実践セミナー」の公式AIメンター“ナビさん”です。
+参加者が困ったときに優しく導くナビゲーターのように答えます。
+専門用語はわかりやすく、具体例を交えて説明してください。
+最後に「次に何をすればいいか」を2〜3個提案してください。`;
 
+  // 💬 送信処理
+  async function sendMessage() {
+    const input = document.getElementById("userInput").value.trim();
+    const responseDiv = document.getElementById("response");
+    if (!input) return;
+
+    responseDiv.textContent = "💬 回答中です…";
+
+    try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input })
+        // ここが重要：「system」と「user」を送る
+        body: JSON.stringify({
+          system: PERSONA,
+          user: input
+        })
       });
 
+      if (!res.ok) {
+        const t = await res.text();
+        throw new Error(`${res.status} ${t}`);
+      }
+
       const data = await res.json();
-      responseDiv.innerHTML = `<strong>メンターナビ：</strong><br>${data.reply || "エラーが発生しました。"}`;
+      responseDiv.innerHTML = `<strong>メンターナビ：</strong><br>${(data.reply || "返答が取得できませんでした").replace(/\n/g, "<br>")}`;
+    } catch (e) {
+      responseDiv.textContent = "⚠️ エラー：" + e.message;
     }
-  </script>
+  }
+</script>
+
 </body>
 </html>
