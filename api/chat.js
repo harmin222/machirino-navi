@@ -67,3 +67,8 @@ function readJson(req) {
     req.on('end', () => {
       try { resolve(JSON.parse(body || '{}')); }
       catch (err) { reject(err); }
+    });
+  });
+}
+
+export const config = { api: { bodyParser: false } };
