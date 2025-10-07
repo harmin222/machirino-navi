@@ -1,6 +1,77 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="utf-8" />
-...
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>街なかリノベーション実践セミナー メンターナビ</title>
+  <style>
+    body {
+      font-family: 'Hiragino Kaku Gothic Pro', sans-serif;
+      background: #f8f9fa;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    textarea {
+      width: 90%;
+      max-width: 600px;
+      height: 120px;
+      margin: 10px auto;
+      display: block;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px 20px;
+      background: #004aad;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #005de6;
+    }
+    .response {
+      background: #ffffff;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧭 街なかリノベーション実践セミナー<br>メンターナビ</h1>
+  <p>質問を入力してください（例：「事業計画の作り方を教えて」）</p>
+  <textarea id="userInput" placeholder="ここに質問を入力..."></textarea>
+  <button onclick="sendMessage()">送信</button>
+
+  <div id="response" class="response"></div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("userInput").value;
+      const responseDiv = document.getElementById("response");
+      responseDiv.innerHTML = "💬 回答中です…";
+
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: input })
+      });
+
+      const data = await res.json();
+      responseDiv.innerHTML = `<strong>メンターナビ：</strong><br>${data.reply || "エラーが発生しました。"}`;
+    }
+  </script>
+</body>
 </html>
